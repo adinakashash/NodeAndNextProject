@@ -1,7 +1,8 @@
 export default class User {
    name!:string;
-   phone!:;
+   phone!:string;
    email!:string;
+   password!:string;
    constructor() { }
 }
 
