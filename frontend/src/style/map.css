@@ -1,0 +1,23 @@
+.App {
+  height: 100vh;
+  width: 100vw;
+}
+.map-container {
+  height: 100%;
+  width: 100%;
+}
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.red-dot {
+  animation: blink 1s infinite;
+}

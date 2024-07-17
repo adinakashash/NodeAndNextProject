@@ -1,11 +1,11 @@
 "use client";
 import ReduxProvider from "@/component/reduxProvider";
-import Login from "@/component/login";
+import Map from "@/component/map";
 import React from "react";
-export default function LoginPage() {
+export default function MapPage() {
   return (
     <ReduxProvider>
-      <Login />
+      <Map />
     </ReduxProvider>
   );
 }

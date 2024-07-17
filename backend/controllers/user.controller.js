@@ -5,10 +5,10 @@ exports.signup = async (req, res) => {
     const task = await userService.signup(req.body);
     res.json(task);
   } catch (error) {
-    res.status(500).json({ message: "Failed to signup" });
+    console.error("Failed to signup:", error.message);
+    res.status(500).json({ message: error.message || "Failed to signup" });
   }
 };
-
 
 exports.login = async (req, res) => {
   try {
@@ -16,8 +16,8 @@ exports.login = async (req, res) => {
     const task = await userService.login(req.body);
     res.json(task);
   } catch (error) {
-    console.error("Failed to login", error);
-    res.status(500).json({ message: "Failed to login" });
+    console.error("Failed to login:", error.message);
+    res.status(500).json({ message: error.message || "Failed to login" });
   }
 };
 
@@ -31,8 +31,8 @@ exports.deleteUser = async (req, res) => {
     }
     res.json({ message: "User deleted successfully" });
   } catch (error) {
-    console.error("Failed to delete user:", error);
-    res.status(500).json({ message: "Failed to delete user" });
+    console.error("Failed to delete user:", error.message);
+    res.status(500).json({ message: error.message || "Failed to delete user" });
   }
 };
 
@@ -41,8 +41,8 @@ exports.getAllUsers = async (req, res) => {
     const users = await userService.getAllUsers();
     res.json(users);
   } catch (error) {
-    console.error("Failed to get users:", error);
-    res.status(500).json({ message: "Failed to get users" });
+    console.error("Failed to get users:", error.message);
+    res.status(500).json({ message: error.message || "Failed to get users" });
   }
 };
 
@@ -57,8 +57,8 @@ exports.updateUser = async (req, res) => {
     }
     res.json(updatedUser);
   } catch (error) {
-    console.error("Failed to update user:", error);
-    res.status(500).json({ message: "Failed to update user" });
+    console.error("Failed to update user:", error.message);
+    res.status(500).json({ message: error.message || "Failed to update user" });
   }
 };
 
@@ -72,7 +72,7 @@ exports.getUserByName = async (req, res) => {
     }
     res.json(user);
   } catch (error) {
-    console.error("Failed to get user:", error);
-    res.status(500).json({ message: "Failed to get user" });
+    console.error("Failed to get user:", error.message);
+    res.status(500).json({ message: error.message || "Failed to get user" });
   }
 };

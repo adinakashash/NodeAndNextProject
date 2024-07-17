@@ -1,5 +1,5 @@
 const bcrypt = require('bcryptjs');
-const User = require("../models/user.models");
+const User = require("../models/user.schema");
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
@@ -22,30 +22,30 @@ exports.signup = async (userData) => {
     const result = await newUser.save();
     return result;
   } catch (error) {
-    throw new Error("Failed to add user");
+    console.error("Failed to add user:", error.message);
+    throw new Error(error.message || "Failed to add user");
   }
 };
-
 
 exports.login = async (userData) => {
   const { email, password } = userData;
   try {
     const user = await User.findOne({ email });
     if (!user) {
-      throw new Error('Auth failed'); 
+      throw new Error('Auth failed');
     }
     const match = await bcrypt.compare(password, user.password);
     if (!match) {
-      throw new Error('Auth failed'); 
+      throw new Error('Auth failed');
     }
     const token = jwt.sign(
       {
         userId: user._id,
         email: user.email
       },
-      process.env.JWT_KEY, 
+      process.env.JWT_KEY,
       {
-        expiresIn: '1h' 
+        expiresIn: '1h'
       }
     );
     return {
@@ -54,9 +54,9 @@ exports.login = async (userData) => {
     };
   } catch (error) {
     console.error('Auth failed:', error.message);
-    throw new Error('Auth failed');
+    throw new Error(error.message || 'Auth failed');
   }
-}
+};
 
 exports.deleteUser = async (userId) => {
   try {
@@ -66,8 +66,8 @@ exports.deleteUser = async (userId) => {
     }
     return deletedUser;
   } catch (error) {
-    console.error("Failed to delete user:", error);
-    throw new Error("Failed to delete user");
+    console.error("Failed to delete user:", error.message);
+    throw new Error(error.message || "Failed to delete user");
   }
 };
 
@@ -75,15 +75,15 @@ exports.getAllUsers = async () => {
   try {
     return await User.find();
   } catch (error) {
-    console.error("Failed to get users:", error);
-    throw new Error("Failed to get users");
+    console.error("Failed to get users:", error.message);
+    throw new Error(error.message || "Failed to get users");
   }
 };
 
 exports.updateUser = async (userId, updateData) => {
   try {
     const updatedUser = await User.findOneAndUpdate(
-      { userId: userId }, // עדכון לפי שדה userId
+      { userId: userId },
       updateData,
       { new: true }
     );
@@ -92,8 +92,8 @@ exports.updateUser = async (userId, updateData) => {
     }
     return updatedUser;
   } catch (error) {
-    console.error("Failed to update user:", error);
-    throw new Error("Failed to update user");
+    console.error("Failed to update user:", error.message);
+    throw new Error(error.message || "Failed to update user");
   }
 };
 
@@ -105,7 +105,7 @@ exports.getUserByName = async (name) => {
     }
     return user;
   } catch (error) {
-    console.error("Failed to get user:", error);
-    throw new Error("Failed to get user");
+    console.error("Failed to get user:", error.message);
+    throw new Error(error.message || "Failed to get user");
   }
 };
