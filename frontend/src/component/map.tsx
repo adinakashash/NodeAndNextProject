@@ -38,8 +38,7 @@ const Map: React.FC = () => {
   } | null>(null);
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey:
-      process.env.REACT_APP_GOOGLE_API_KEY ||
-      "AIzaSyCkZB_Ga1JaDjV2A1lCELpfrGR9RnK4Gu4",
+      process.env.REACT_APP_GOOGLE_API_KEY||''
   });
 
   const handleClickOpen = () => setOpen(true);
