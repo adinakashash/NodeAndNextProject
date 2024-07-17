@@ -1,71 +1,62 @@
 require("dotenv").config();
-const express = require("express");
-const mongoose = require("mongoose");
-const userRouter = require("./routers/user.router");
-const reportRouter = require("./routers/report.router");
-const workerRouter = require("./routers/worker.router")
-const bodyParser = require("body-parser");
+const express = require('express');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
+const session = require('express-session');
+const passport = require('passport');
+const userRouter = require('./routers/user.router');
+const reportRouter = require('./routers/report.router');
+// const auth0Routes = require('./routers/Auth0');
+
+require('./middleware/Auth0');
+
 const app = express();
 
-app.use(cors());
 app.use(bodyParser.json());
-app.use("/users", userRouter);
-app.use("/reports", reportRouter);
-app.use("/workers", workerRouter);
+app.use(cors({ origin: 'http://localhost:3000', credentials: true })); 
+app.use(cookieParser());
+app.use(session({ secret: 'SECRET', resave: true, saveUninitialized: true }));
+app.use(passport.initialize());
+app.use(passport.session());
+// app.use('/users', userRouter);
+app.use('/reports', reportRouter);
+app.get('/auth/google', passport.authenticate('google', { scope: ['https://www.googleapis.com/auth/plus.login'] }));
 
+app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/' }), (req, res) => {
+  res.redirect('/profile');
+});
+
+app.get('/auth/logout', (req, res) => {
+  req.logout((err) => {
+    if (err) {
+      return res.status(500).json({ message: 'Logout failed', error: err });
+    }
+    req.session.destroy((err) => {
+      if (err) {
+        return res.status(500).json({ message: 'Failed to destroy session', error: err });
+      }
+      res.clearCookie('connect.sid');
+      res.json({ message: 'Logout successful' });
+    });
+  });
+});
+
+app.get('/profile', (req, res) => {
+  if (req.isAuthenticated()) {
+    res.send(req.user);
+  } else {
+    res.status(401).json({ message: 'Not authenticated' });
+  }
+});
+app.get('/', (req, res) => {
+  res.send('Home Page');
+});
+
+
+const CONNECTION_URL = 'mongodb://localhost:27017/users';
 const PORT = process.env.PORT || 5000;
-mongoose.connect(process.env.CONECTION_URL,{}).then(
-    ()=>app.listen(PORT,()=>console.log(`server runing on port ${PORT}`)))
-    .catch((error)=>console.log(error.message));
-
-// const express = require("express");
-
-// const { OAuth2Client } = require('google-auth-library');
-// const User = require("./models/user.schema");
-// const jwt = require('jsonwebtoken');
-// const cors = require('cors');
-
-// const JWT_SECRET = process.env.JWT_KEY;
-// const CLIENT_ID = process.env.CLIENT_ID;
-// const CLIENT_SECRET = process.env.CLIENT_SECRET;
-// const REDIRECT_URI = process.env.REDIRECT_URI;
-// const dotenv =require('dotenv');
-// dotenv.config();
-
-// const client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
-// const app = express();
-// const PORT = 3000;
-// app.use(cors());
-// app.use(express.json());
-
-// app.post("/google-auth", async (req, res) => {
-//   const { credential } = req.body;
-
-//   try {
-//     const ticket = await client.verifyIdToken({
-//       idToken: credential,
-//       audience: CLIENT_ID,
-//     });
-//     const payload = ticket.getPayload();
-//     const email = payload?.email;
-
-//     let user = await User.findOne({ email });
-//     if (!user) {
-//       user = await User.create({
-//         email,
-//         name: payload.name || 'No Name',
-//         authSource: 'google',
-//       });
-//     }
-
-//     const token = jwt.sign({ user }, JWT_SECRET);
-//     res.status(200).cookie('token', token, { httpOnly: true }).json({ payload });
-//   } catch (err) {
-//     res.status(400).json({ err });
-//   }
-// });
-
-// app.listen(PORT, () => {
-//   console.log(`Server is running on port ${PORT}`);
-// });
+mongoose.connect(CONNECTION_URL, {})
+  .then(() => app.listen(3000, () => console.log(`Server running on port ${3000}`)))
+  .catch((error) => console.log(error.message));
