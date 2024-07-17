@@ -1,0 +1,36 @@
+/* src/components/ImageSlider.css */
+
+.image-slider {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+  
+  .image-slider img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .fade-enter{
+    
+  }
+  
+  .fade-enter {
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+  }
+  
+  .fade-enter-active {
+    opacity: 1;
+  }
+  
+  .fade-exit {
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out;
+  }
+  
+  .fade-exit-active {
+    opacity: 0;
+  }
+  
