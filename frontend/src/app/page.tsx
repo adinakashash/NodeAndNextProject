@@ -1,11 +1,13 @@
-
-export default function Home() {
+"use client";
+import ReduxProvider from "@/component/reduxProvider";
+import Nuv from "@/component/nuv";
+import ImageSlider from "@/component/ImageSlider";
+import React from "react";
+export default function LoginPage() {
   return (
-    <>
-     <main> 
-          <h1>hi</h1>     
-     </main>
-
-    </>
+    <ReduxProvider>
+      <Nuv />
+      <ImageSlider />
+    </ReduxProvider>
   );
 }

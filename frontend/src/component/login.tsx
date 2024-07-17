@@ -71,8 +71,8 @@ export default function Login() {
               const formJson = Object.fromEntries((formData as any).entries());
               const user: User = {
                 name,
-                phone,
                 email,
+                phone,
                 password,
               };
               console.log(user);
@@ -192,7 +192,7 @@ export default function Login() {
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose}>Cancel</Button>
-            <Button type="submit">Submit</Button>
+            <Button type="submit">Subscribe</Button>
           </DialogActions>
         </Dialog>
       </React.Fragment>
