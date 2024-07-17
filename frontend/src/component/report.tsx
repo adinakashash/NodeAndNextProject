@@ -69,10 +69,14 @@ const Report: React.FC = (props:any) => {
 
   const handleSubmit = () => {
     const user: User = {
-      name,
-      email,
-      phone: "09888",
-      password: "String"
+      firstName: name,
+      phone: phone,
+      enail: email,
+      googleId: "123",
+      displayName: name,
+      lastName: name,
+      image: "undefined",
+      adderss: "undefined"
     };
     const location: LatLng = {
        lat, 

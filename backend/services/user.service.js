@@ -5,16 +5,14 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 exports.signup = async (userData) => {
-  const { name, email, phone, password } = userData;
+  const {  email, phone, password } = userData;
   try {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       throw new Error('Email already exists');
     }
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({
-      _id: new mongoose.Types.ObjectId(),
-      name,
+    // const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new User({      
       email,
       phone,
       password: hashedPassword
@@ -28,7 +26,7 @@ exports.signup = async (userData) => {
 };
 
 exports.login = async (userData) => {
-  const { email, password } = userData;
+  const { email,address, phon } = userData;
   try {
     const user = await User.findOne({ email });
     if (!user) {
@@ -60,7 +58,7 @@ exports.login = async (userData) => {
 
 exports.deleteUser = async (userId) => {
   try {
-    const deletedUser = await User.findOneAndDelete({ userId: userId });
+    const deletedUser = await User.findOneAndDelete({ email: email });
     if (!deletedUser) {
       throw new Error("User not found");
     }
@@ -80,10 +78,10 @@ exports.getAllUsers = async () => {
   }
 };
 
-exports.updateUser = async (userId, updateData) => {
+exports.updateUser = async (email, updateData) => {
   try {
     const updatedUser = await User.findOneAndUpdate(
-      { userId: userId },
+      { email: email },
       updateData,
       { new: true }
     );
@@ -97,9 +95,9 @@ exports.updateUser = async (userId, updateData) => {
   }
 };
 
-exports.getUserByName = async (name) => {
+exports.getUserByName = async (displayName) => {
   try {
-    const user = await User.findOne({ name });
+    const user = await User.findOne({ displayName });
     if (!user) {
       throw new Error("User not found");
     }

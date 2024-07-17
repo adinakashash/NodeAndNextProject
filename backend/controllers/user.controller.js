@@ -22,10 +22,10 @@ exports.login = async (req, res) => {
 };
 
 exports.deleteUser = async (req, res) => {
-  const userId = req.params.userId;
+  const email = req.body.email;
   console.log(userId);
   try {
-    const deletedUser = await userService.deleteUser(userId);
+    const deletedUser = await userService.deleteUser(email);
     if (!deletedUser) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -47,11 +47,10 @@ exports.getAllUsers = async (req, res) => {
 };
 
 exports.updateUser = async (req, res) => {
-  const { userId } = req.params;
-  const { name, email } = req.body;
+  const { displayName, email } = req.body;
 
   try {
-    const updatedUser = await userService.updateUser(userId, { name, email });
+    const updatedUser = await userService.updateUser( { displayName, email });
     if (!updatedUser) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -63,10 +62,10 @@ exports.updateUser = async (req, res) => {
 };
 
 exports.getUserByName = async (req, res) => {
-  const { name } = req.params;
+  const { displayName } = req.params;
 
   try {
-    const user = await userService.getUserByName(name);
+    const user = await userService.getUserByName(displayName);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
