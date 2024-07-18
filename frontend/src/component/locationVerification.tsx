@@ -16,7 +16,7 @@ interface LocationDialogProps {
 const LocationDialog: React.FC<LocationDialogProps> = ({ open, address, onClose, onAgree }) => {  
   return (
     <Dialog open={open} onClose={onClose} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
-      <DialogTitle id="alert-dialog-title">{"Would you like to report this location?"}</DialogTitle>
+      <DialogTitle id="alert-dialog-title">{("Would you like to report this location?")}</DialogTitle>
       <DialogContent>
         <DialogContentText id="alert-dialog-description">{address}</DialogContentText>
       </DialogContent>

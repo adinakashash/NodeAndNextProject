@@ -88,6 +88,9 @@ const Map: React.FC = () => {
     }
     setOpen(false);
   };
+  const handleAgreeLocationWorkers = () => {
+    setOpen(false);
+  };
 
   const handleMapClick = useCallback((event: google.maps.MapMouseEvent) => {
     if (event.latLng && userType === "user") {
@@ -121,6 +124,7 @@ const Map: React.FC = () => {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
         };
+        console.log("User location:", userPosition); // הוספת לוג לבדיקת המיקום
         setMarkerPosition(userPosition);
         setMapCenter(userPosition);
         getAddress(userPosition);
