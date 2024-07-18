@@ -1,17 +1,20 @@
  
 const mongoose = require("mongoose");
 const User = require("./user.schema");
-
 const typeWorkerEnum = [
-    "Traffic Engineer",
-    "Plumber",
-    "Sanitation Worker",
-    "Electrician",
-    "Road Worker",
-    "Sewage Worker",
-    "Arborist",
-    "Sign Technician"
-];
+  "manager",
+  "general",
+  "crash",
+  "water",
+  "trash",
+  "electricity",
+  "pavement",
+  "street light",
+  "traffic light",
+  "sewage",
+  "tree",
+  "sign",
+]
 
 const WorkerSchema = new mongoose.Schema({
   user: {

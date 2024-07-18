@@ -8,21 +8,20 @@ const session = require('express-session');
 const passport = require('passport');
 const userRouter = require('./routers/user.router');
 const reportRouter = require('./routers/report.router');
-// const auth0Routes = require('./routers/Auth0');
-
-require('./middelware/Auth0');
+require('./middleware/Auth0');
 
 const app = express();
 
 app.use(bodyParser.json());
-app.use(cors({ origin: 'http://localhost:3000', credentials: true })); 
+app.use(cors());
 app.use(cookieParser());
 app.use(session({ secret: 'SECRET', resave: true, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use('/users', userRouter);
 app.use('/reports', reportRouter);
-app.get('/auth/google', passport.authenticate('google', { scope: ['https://www.googleapis.com/auth/plus.login'] }));
+
+app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/' }), (req, res) => {
   res.redirect('/profile');
@@ -51,13 +50,13 @@ app.get('/profile', (req, res) => {
     res.status(401).json({ message: 'Not authenticated' });
   }
 });
+
 app.get('/', (req, res) => {
   res.send('Home Page');
 });
 
-
-const CONNECTION_URL = 'mongodb://localhost:27017/users';
+const CONNECTION_URL = 'mongodb://localhost:27017';
 const PORT = process.env.PORT || 5000;
 mongoose.connect(CONNECTION_URL, {})
-  .then(() => app.listen(3000, () => console.log(`Server running on port ${3000}`)))
+  .then(() => app.listen(PORT, () => console.log(`Server running on port ${PORT}`)))
   .catch((error) => console.log(error.message));

@@ -2,19 +2,15 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import User from '../classes/user';
 
-
-
 const GoogleAuth: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
 
   const handleLogin = () => {
     window.open('http://localhost:3000/auth/google', '_self'); 
-    console.log(user);
-    
   };
 
   const handleLogout = () => {
-    axios.get('http://localhost:3000/auth/logout') 
+    axios.get('http://localhost:3000/auth/logout', { withCredentials: true }) 
       .then(() => {
         setUser(null);
       })
@@ -39,7 +35,7 @@ const GoogleAuth: React.FC = () => {
         <>
           <div>
             <h1>Profile</h1>
-            <img src={user.image} alt="Profile" />
+            {user.image && <img src={user.image} alt="Profile" />}
             <h2>{user.displayName}</h2>
           </div>
           <button onClick={handleLogout}>Logout</button>

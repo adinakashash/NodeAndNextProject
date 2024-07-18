@@ -3,7 +3,7 @@ const userSchema = require('./user.schema');
 
 const ReportSchema = new mongoose.Schema({
   description: String,
-  reportedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  reportedBy: { type: userSchema, required: true },
   handledBy: String,
   status: {
     type: String,

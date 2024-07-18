@@ -1,8 +1,7 @@
-// src/pages/index.tsx
 import React, { useState, useEffect } from 'react';
 import { AppBar, Tabs, Tab } from '@mui/material';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
-import '../style/App.css'; // קובץ ה-CSS עבור האנימציה
+import '../style/App.css'; 
 
 const HomePage = () => {
   const [index, setIndex] = useState(0);
