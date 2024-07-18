@@ -3,20 +3,11 @@ require('dotenv').config();
 
 exports.addWorker = async (worker) => {
   try {  
-      console.log(worker);   
-      
-      // const { workerID } = worker;
-      // const existingWorker = await Worker.findOne({ workerID });
-      // if (existingWorker) {
-      //   throw new Error('worker already exists');
-      // }
-
       const newWorker = new Worker({...worker});
-      console.log('kkkkkkkkkkkkkkkk');
       const result = await newWorker.save();
       return result;
   } catch (error) {
-      console.error('Error details:', error); // הוספת הדפסת שגיאה
+      console.error('Error details:', error); 
       throw new Error('Error occurred while adding the worker');
   }
 };

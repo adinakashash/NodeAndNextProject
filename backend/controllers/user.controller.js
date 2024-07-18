@@ -12,7 +12,6 @@ exports.signup = async (req, res) => {
 
 exports.login = async (req, res) => {
   try {
-    console.log(req.body);
     const task = await userService.login(req.body);
     res.json(task);
   } catch (error) {
@@ -23,7 +22,6 @@ exports.login = async (req, res) => {
 
 exports.deleteUser = async (req, res) => {
   const email = req.body.email;
-  console.log(userId);
   try {
     const deletedUser = await userService.deleteUser(email);
     if (!deletedUser) {

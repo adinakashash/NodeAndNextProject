@@ -2,9 +2,7 @@ const reportService = require('../services/report.service');
 
 exports.addReport = async (req, res) => {
   try {
-    console.log(req.body);
     const rep = await reportService.addReport(req.body);
-    console.log(rep);
     res.json(rep);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -12,18 +10,17 @@ exports.addReport = async (req, res) => {
 };
 
 exports.updateReport = async (req, res) => {
-  const { reportId } = req.params;
-  const { handledBy , status } = req.body;
   try {
-    const updatedReport = await reportService.updateReport(reportId, { handledBy, status });
+    const updatedReport = await reportService.updateReport(req.body);
     if (!updatedReport) {
-      return res.status(404).json({ message: "report not found" });
+      return res.status(404).json({ message: "Report not found" });
     }
     res.json(updatedReport);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+
 
 exports.getAllReports = async (req, res) => {
   try {
@@ -48,15 +45,16 @@ exports.deleteReport = async (req, res) => {
 };
 
 exports.getReportByCity = async (req, res) => {
-  const city= req.params.city;
+  const city = req.params.city;
   try {
-    console.log(city);
     const reports = await reportService.getReportByCity(city);
     if (!reports.length) {
       return res.status(404).json({ message: "No reports found for the given city" });
     }
     res.json(reports);
   } catch (error) {
+    console.error("Error in controller:", error);
     res.status(500).json({ message: error.message });
   }
 };
+

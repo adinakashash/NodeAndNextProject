@@ -1,12 +1,9 @@
 const mongoose = require('mongoose');
+const userSchema = require('./user.schema');
 
 const ReportSchema = new mongoose.Schema({
   description: String,
-  reportedBy: {
-    type: mongoose.Schema.Types.ObjectId,  
-    ref: 'User', 
-    required: true
-  },
+  reportedBy: { type: userSchema, required: true },
   handledBy: String,
   status: {
     type: String,
@@ -17,7 +14,7 @@ const ReportSchema = new mongoose.Schema({
     type: String,
     enum: ["Low", "Medium", "High"],
   },
-  reportImage: String,
+  reportImage: String ,
   location: {
     lat: Number,
     lng: Number,
@@ -39,7 +36,6 @@ const ReportSchema = new mongoose.Schema({
       "sign",
     ],
   },
-  address: String
+  address:String
 });
-
-module.exports = mongoose.model('Report', ReportSchema);
+module.exports=mongoose.model('Report',ReportSchema)

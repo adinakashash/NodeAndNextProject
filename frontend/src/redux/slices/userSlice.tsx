@@ -3,7 +3,6 @@ import { RootState } from "../store";
 import axios from "axios";
 import User from "@/classes/user";
 const http = "http://localhost:3000";
-// const response = await axios.get(`${http}/users`);
 const { data = {} } = [];
 
 const userSlice = createSlice({

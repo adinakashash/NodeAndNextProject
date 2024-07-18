@@ -1,14 +1,14 @@
-class User {
+class UserClass {
     googleId!: String;
     displayName!: String;
     firstName!: String;
     lastName!: String;
     image!: String;
     phone!:String;
-    enail!:String;
-    adderss!:String;
+    email!:String;
+    address!:String;
     constructor() { }
 }
 
-export default User
+export default UserClass
 

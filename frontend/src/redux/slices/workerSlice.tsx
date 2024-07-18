@@ -4,7 +4,7 @@ import axios from "axios";
 import { WorkerClass } from "@/classes/worker";
 
 const http = "http://localhost:3000";
-const initialState: WorkerClass[] = []; // שינוי initialState להיות מערך ריק
+const initialState: WorkerClass[] = []; 
 
 const workerslice = createSlice({
   name: "workers",

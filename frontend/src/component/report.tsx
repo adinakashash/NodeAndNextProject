@@ -19,6 +19,7 @@ import {
 import { addReport } from "@/redux/slices/reportSlice";
 import User from "@/classes/user";
 import { useRouter, useSearchParams } from 'next/navigation';
+import UserClass from "@/classes/user";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -68,7 +69,7 @@ const Report: React.FC = (props:any) => {
   };
 
   const handleSubmit = () => {
-    const user: User = {
+    const user: UserClass = {
       firstName: name,
       phone: phone,
       enail: email,

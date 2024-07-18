@@ -42,17 +42,23 @@ exports.getAllReports = async () => {
   }
 };
 
-exports.updateReport = async (reportId, updateData) => {
+exports.updateReport = async (reportData) => {
+  const { handledBy, status, _id } = reportData;
+    const updateData = {
+    handledBy:handledBy,
+    status: status,
+  };
   try {
-    const updateReport = await Report.findOneAndUpdate(
-      { reportId: reportId },
-      updateData,
-      { new: true } 
+    const updatedReport = await Report.findOneAndUpdate(
+      { _id: _id },
+      { $set: updateData },
+      { new: true }
     );
-    if (!updateReport) {
-      throw new Error("report not found");
+    if (!updatedReport) {
+      throw new Error("Report not found");
     }
-    return updateReport;
+    
+    return updatedReport;
   } catch (error) {
     console.error("Failed to update report:", error);
     throw new Error("Failed to update report");
@@ -60,15 +66,15 @@ exports.updateReport = async (reportId, updateData) => {
 };
 
 
+
 exports.getReportByCity = async (city) => {
   try {
-    console.log("Searching for city:", city);
-    const regex = new RegExp(city, 'i'); // 'i' for case-insensitive
+    const regex = new RegExp(city, 'i'); 
     const reports = await Report.find({ address: { $regex: regex } });
-    console.log("Reports found:", reports);
     return reports;
   } catch (error) {
     console.error("Failed to get reports by city:", error);
     throw new Error("Failed to get reports by city");
   }
 };
+

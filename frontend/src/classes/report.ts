@@ -1,10 +1,12 @@
-import User from "./user";
+import UserClass from "./user";
+import { WorkerClass } from "./worker";
 export enum ReportStatus {
     Pending = "Pending",
     InProcess = "InProcess",
     Fixed = "Fixed",
   }
   
+
   export enum ReportPriority {
     Low = "Low",
     Medium = "Medium",
@@ -34,8 +36,8 @@ export enum ReportStatus {
   
   export interface Report {
     description: string;
-    reportedBy: User;
-    handledBy?: string;
+    reportedBy: UserClass;
+    handledBy: string;
     status: ReportStatus;
     priority: ReportPriority;
     reportImage?: string;
@@ -46,8 +48,8 @@ export enum ReportStatus {
   
   export class ReportClass implements Report {
     description: string;
-    reportedBy: User;
-    handledBy?: string;
+    reportedBy: UserClass;
+    handledBy: string;
     status: ReportStatus;
     priority: ReportPriority;
     reportImage?: string;
@@ -57,7 +59,7 @@ export enum ReportStatus {
 
     constructor(
       description: string,
-      reportedBy: User,
+      reportedBy: UserClass,
       handledBy: string,
       status: ReportStatus,
       priority: ReportPriority,
