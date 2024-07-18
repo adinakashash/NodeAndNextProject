@@ -10,7 +10,7 @@ const userRouter = require('./routers/user.router');
 const reportRouter = require('./routers/report.router');
 // const auth0Routes = require('./routers/Auth0');
 
-require('./middleware/Auth0');
+require('./middelware/Auth0');
 
 const app = express();
 
@@ -20,12 +20,13 @@ app.use(cookieParser());
 app.use(session({ secret: 'SECRET', resave: true, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
-// app.use('/users', userRouter);
+app.use('/users', userRouter);
 app.use('/reports', reportRouter);
 app.get('/auth/google', passport.authenticate('google', { scope: ['https://www.googleapis.com/auth/plus.login'] }));
 
 app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/' }), (req, res) => {
   res.redirect('/profile');
+  // res.redirect('/users/signup')
 });
 
 app.get('/auth/logout', (req, res) => {

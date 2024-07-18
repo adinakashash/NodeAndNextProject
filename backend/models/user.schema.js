@@ -11,4 +11,4 @@ const UserSchema=new mongoose.Schema({
     adderss:String,
 })
 
-module.exports=mongoose.model('users',UserSchema)
+module.exports = mongoose.model('User', UserSchema);
