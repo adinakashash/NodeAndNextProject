@@ -9,14 +9,15 @@ import DialogTitle from "@mui/material/DialogTitle";
 interface LocationDialogProps {
   open: boolean;
   address: string;
+  userType:string;
   onClose: () => void;
   onAgree: () => void;
 }
 
-const LocationDialog: React.FC<LocationDialogProps> = ({ open, address, onClose, onAgree }) => {  
+const LocationDialog: React.FC<LocationDialogProps> = ({ open, address,userType, onClose, onAgree }) => {  
   return (
     <Dialog open={open} onClose={onClose} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
-      <DialogTitle id="alert-dialog-title">{"Would you like to report this location?"}</DialogTitle>
+      <DialogTitle id="alert-dialog-title">{userType==='user'?("Would you like to report this location?"):(("Would you like to fix this hazard?"))}</DialogTitle>
       <DialogContent>
         <DialogContentText id="alert-dialog-description">{address}</DialogContentText>
       </DialogContent>

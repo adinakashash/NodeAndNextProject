@@ -16,35 +16,36 @@ interface LatLng {
 
 const Map: React.FC = () => {
   const reports = useSelector((state: RootState) => state.reports.reports);
-  const reportsArr: ReportClass[] = Array(reports) || [];
-  console.log(reportsArr);
-  
   const dispatch = useAppDispatch();
+  const reportsArr: ReportClass[] = reports;
   useEffect(() => {
     dispatch(getReportByCity("ירושלים"));
-  }, []);
+  }, [dispatch]);
   const router = useRouter();
+
   const [open, setOpen] = useState(false);
   const [markerPosition, setMarkerPosition] = useState<LatLng | null>(null);
   const [mapCenter, setMapCenter] = useState<LatLng>({
-    lat: 18.5204,
-    lng: 73.8567,
+    lat: 31.771959,
+    lng: 35.217018,
   });
   const [address, setAddress] = useState<string>("");
-  const currentUser = "employee";
+  const [userType, setUserType] = useState<string>("user");
   const [reportData, setReportData] = useState<{
     location: LatLng;
     address: string;
   } | null>(null);
+
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey:
-      process.env.REACT_APP_GOOGLE_API_KEY||''
+      process.env.REACT_APP_GOOGLE_API_KEY ||
+      "AIzaSyCkZB_Ga1JaDjV2A1lCELpfrGR9RnK4Gu4",
   });
 
   const handleClickOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const handleAgreeLocation = () => {
+  const handleAgreeLocationUser = () => {
     if (markerPosition) {
       const { lat, lng } = markerPosition;
       router.push(
@@ -53,9 +54,12 @@ const Map: React.FC = () => {
     }
     setOpen(false);
   };
+  const handleAgreeLocationWorkers = () => {
+    setOpen(false);
+  };
 
   const handleMapClick = useCallback((event: google.maps.MapMouseEvent) => {
-    if (event.latLng) {
+    if (event.latLng&&userType==='user') {
       const position: LatLng = {
         lat: event.latLng.lat(),
         lng: event.latLng.lng(),
@@ -86,6 +90,7 @@ const Map: React.FC = () => {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
         };
+        console.log("User location:", userPosition); // הוספת לוג לבדיקת המיקום
         setMarkerPosition(userPosition);
         setMapCenter(userPosition);
         getAddress(userPosition);
@@ -97,10 +102,14 @@ const Map: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (isLoaded) {
+    if (isLoaded && userType === "user") {
       getUserLocation();
     }
-  }, [isLoaded, getUserLocation]);
+  }, [isLoaded, getUserLocation, userType]);
+
+  useEffect(() => {
+    dispatch(getReportByCity("ירושלים"));
+  }, [dispatch]);
 
   if (loadError) {
     return <div>Error loading maps</div>;
@@ -112,31 +121,34 @@ const Map: React.FC = () => {
 
   return (
     <div className="App">
-      {currentUser === "employee" ? (
-        <GoogleMap
-          mapContainerClassName="map-container"
-          center={mapCenter}
-          zoom={15}
-          onClick={handleMapClick}
-        >
-          {markerPosition && (
-            <Marker
-              position={markerPosition}
-              draggable={true}
-              onDragEnd={(event: google.maps.MapMouseEvent) => {
-                if (event.latLng) {
-                  const position: LatLng = {
-                    lat: event.latLng.lat(),
-                    lng: event.latLng.lng(),
-                  };
-                  setMarkerPosition(position);
-                  setMapCenter(position);
-                  getAddress(position);
-                }
-              }}
-            />
-          )}
-          {reportsArr.map((rep, index) => (
+      <GoogleMap
+        mapContainerClassName="map-container"
+        center={mapCenter}
+        zoom={userType === "employee" ? 15 : 18}
+        onClick={handleMapClick}
+        
+        
+      >
+        {markerPosition && (
+          <Marker
+            position={markerPosition}
+            draggable={true}
+            onDragEnd={(event: google.maps.MapMouseEvent) => {
+              if (event.latLng) {
+                const position: LatLng = {
+                  lat: event.latLng.lat(),
+                  lng: event.latLng.lng(),
+                };
+                setMarkerPosition(position);
+                setMapCenter(position);
+                getAddress(position);
+              }
+            }}
+          />
+        )}
+        {userType === "employee" &&
+          reportsArr.length > 0 &&
+          reportsArr.map((rep, index) => (
             <Marker
               key={index}
               position={{ lat: rep.location?.lat, lng: rep.location?.lng }}
@@ -144,61 +156,44 @@ const Map: React.FC = () => {
                 url: "https://mt.google.com/vt/icon/text=!&psize=19&font=fonts/arialuni_t.ttf&color=ff390000&name=icons/spotlight/spotlight-waypoint-b.png&ax=44&ay=48&scale=1",
               }}
               onClick={() => {
-                console.log("location.address" + rep.address);
-                setAddress(rep.address);
-                setReportData({ location: rep.location, address: rep.address });
+                console.log("Report clicked:", rep); 
+                getAddress(rep.location);
                 handleClickOpen();
               }}
             />
           ))}
-        </GoogleMap>
+      </GoogleMap>
+      {userType === "user" ? (
+        <LocationDialog
+          open={open}
+          address={address}
+          userType={userType}
+          onClose={handleClose}
+          
+          onAgree={handleAgreeLocationUser}
+        />
       ) : (
-        <>
-          <GoogleMap
-            mapContainerClassName="map-container"
-            center={mapCenter}
-            zoom={18}
-            onClick={handleMapClick}
-          >
-            {markerPosition && (
-              <Marker
-                position={markerPosition}
-                draggable={true}
-                onDragEnd={(event: google.maps.MapMouseEvent) => {
-                  if (event.latLng) {
-                    const position: LatLng = {
-                      lat: event.latLng.lat(),
-                      lng: event.latLng.lng(),
-                    };
-                    setMarkerPosition(position);
-                    setMapCenter(position);
-                    getAddress(position);
-                  }
-                }}
-              />
-            )}
-          </GoogleMap>
-          <LocationDialog
-            open={open}
-            address={address}
-            onClose={handleClose}
-            onAgree={handleAgreeLocation}
-          />
-          {address && <div className="address">Current Address: {address}</div>}
-          {reportData && (
-            <div className="report">
-              <h3>Event Details</h3>
-              <p>Location: {reportData.address}</p>
-              <p>
-                Event:{" "}
-                {
-                  reportsArr.find((loc) => loc.address === reportData.address)
-                    ?.status
-                }
-              </p>
-            </div>
-          )}
-        </>
+        <LocationDialog
+          open={open}
+          address={address}
+          userType={userType}
+          onClose={handleClose}
+          onAgree={handleAgreeLocationWorkers}
+        />
+      )}
+      {address && <div className="address">Current Address: {address}</div>}
+      {reportData && (
+        <div className="report">
+          <h3>Event Details</h3>
+          <p>Location: {reportData.address}</p>
+          <p>
+            Event:{" "}
+            {
+              reportsArr.find((loc) => loc.address === reportData.address)
+                ?.status
+            }
+          </p>
+        </div>
       )}
     </div>
   );
