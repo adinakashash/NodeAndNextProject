@@ -40,7 +40,7 @@ export enum ReportStatus {
     handledBy: string;
     status: ReportStatus;
     priority: ReportPriority;
-    reportImage?: string;
+    reportImage: File|null;
     location: LatLng;
     address:string,
     reportType: ReportType|null;
@@ -52,7 +52,7 @@ export enum ReportStatus {
     handledBy: string;
     status: ReportStatus;
     priority: ReportPriority;
-    reportImage?: string;
+    reportImage: File|null;
     location: LatLng;
     reportType: ReportType|null;
     address: string;
@@ -63,7 +63,7 @@ export enum ReportStatus {
       handledBy: string,
       status: ReportStatus,
       priority: ReportPriority,
-      reportImage: string,
+      reportImage: File|null,
       location: LatLng,
       reportType: ReportType,
       address:string

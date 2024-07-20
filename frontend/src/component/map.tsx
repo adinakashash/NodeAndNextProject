@@ -21,7 +21,8 @@ const Map: React.FC = () => {
   const dispatch = useAppDispatch();
   const reports = useSelector((state: RootState) => state.reports.reports);
   const reportsArr: ReportClass[] = reports;
-
+ console.log(reports);
+ 
   const user: UserClass = {
     firstName: "name",
     phone: "phone",
@@ -88,9 +89,7 @@ const Map: React.FC = () => {
     }
     setOpen(false);
   };
-  const handleAgreeLocationWorkers = () => {
-    setOpen(false);
-  };
+ 
 
   const handleMapClick = useCallback((event: google.maps.MapMouseEvent) => {
     if (event.latLng && userType === "user") {
@@ -208,7 +207,7 @@ const Map: React.FC = () => {
           {address && <div className="address">Current Address: {address}</div>}
         </>
       ) : (
-        <FixReport report={reportData} setReportData={setReportData} />
+        <FixReport report={reportData} setReportData={setReportData} VieTheTask={false} />
       )}
     </div>
   );
