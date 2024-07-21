@@ -3,8 +3,10 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { AppBar, Tabs, Tab } from '@mui/material';
 import { useRouter } from 'next/navigation';
 
+
 const HomePage = () => {
-    const router = useRouter(); 
+
+const router = useRouter(); 
 
   const handleSubmitLocation = () => {
     router.push('/login');
