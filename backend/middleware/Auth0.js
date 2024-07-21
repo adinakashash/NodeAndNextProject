@@ -9,6 +9,9 @@ passport.use(new GoogleStrategy({
   callbackURL: 'http://localhost:3000/auth/google/callback'
 },
 async function(accessToken, refreshToken, profile, done) {
+  console.log('Access Token:', accessToken);
+  console.log('Profile:', profile);
+
   const newUser = {
     googleId: profile.id,
     displayName: profile.displayName,
@@ -16,7 +19,6 @@ async function(accessToken, refreshToken, profile, done) {
     lastName: profile.name.familyName,
     image: profile.photos[0].value
   };
-
 
   try {
     let user = await User.findOne({ googleId: profile.id });
@@ -33,15 +35,3 @@ async function(accessToken, refreshToken, profile, done) {
   }
 }));
 
-passport.serializeUser((user, done) => {
-  done(null, user.id);
-});
-
-passport.deserializeUser(async (id, done) => {
-  try {
-    const user = await User.findById(id);
-    done(null, user);
-  } catch (err) {
-    done(err, null);
-  }
-});

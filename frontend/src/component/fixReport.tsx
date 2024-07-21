@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   Container,
@@ -15,26 +15,33 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useAppDispatch } from "@/redux/hook";
 import { deleteReport, editReport } from "@/redux/slices/reportSlice";
 import { ReportClass, ReportStatus } from "@/classes/report";
-
+import CommentIcon from "@mui/icons-material/Comment";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import Chat from "./chat";
 interface ReportFoxDate {
   vieTheTask: boolean;
   report: ReportClass | null;
   setReportData: React.Dispatch<React.SetStateAction<ReportClass | null>>;
 }
 
-const FixReport: React.FC<ReportFoxDate> = ({ report, setReportData,vieTheTask }) => {
+const FixReport: React.FC<ReportFoxDate> = ({
+  report,
+  setReportData,
+  vieTheTask,
+}) => {
   const router = useRouter();
   const dispatch = useAppDispatch();
-
+  const [chat, setChat] = useState<boolean>(false);
   const handleFixReport = () => {
     if (report) {
-      dispatch(
-        deleteReport(report._id)
-      );
+      dispatch(deleteReport(report._id));
       router.push("/");
     }
   };
-  const handleEditReport=()=>{
+  const chatWithTheReporter = () => {
+    setChat(true);
+  };
+  const handleEditReport = () => {
     if (report) {
       dispatch(
         editReport({
@@ -45,7 +52,7 @@ const FixReport: React.FC<ReportFoxDate> = ({ report, setReportData,vieTheTask }
       );
       router.push("/");
     }
-  }
+  };
 
   const handleReturnToMap = () => {
     setReportData(null);
@@ -53,6 +60,9 @@ const FixReport: React.FC<ReportFoxDate> = ({ report, setReportData,vieTheTask }
 
   if (!report) {
     return <Typography variant="h6">No report found</Typography>;
+  }
+  if (chat) {
+    return <Chat reportId={"669c58c3e5e1e99ddc8925dc"}/>;
   }
 
   return (
@@ -95,7 +105,7 @@ const FixReport: React.FC<ReportFoxDate> = ({ report, setReportData,vieTheTask }
           <Typography variant="body2" color="text.secondary" paragraph>
             Status: {report.status}
           </Typography>
-          { !vieTheTask ? (
+          {!vieTheTask ? (
             <Button
               variant="contained"
               color="primary"
@@ -116,13 +126,24 @@ const FixReport: React.FC<ReportFoxDate> = ({ report, setReportData,vieTheTask }
               Report as complete
             </Button>
           )}
-
+          <br />
           <Button
             variant="contained"
             onClick={handleReturnToMap}
+            startIcon={<LocationOnIcon />}
             style={{ marginTop: "0.5rem" }}
           >
             Return to Map
+          </Button>
+          <br />
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<CommentIcon />}
+            onClick={chatWithTheReporter}
+            style={{ marginTop: "0.5rem", marginRight: "0.5rem" }}
+          >
+            Chat with the reporter
           </Button>
         </CardContent>
       </Card>

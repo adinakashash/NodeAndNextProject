@@ -1,0 +1,42 @@
+.messages-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px;
+    background-color: #f0f0f0;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .message {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 8px;
+    max-width: 80%;
+  }
+  
+  .message.sent {
+    align-items: flex-end;
+  }
+  
+  .message.received {
+    align-items: flex-start;
+  }
+  
+  .message .MuiTypography-root {
+    padding: 8px;
+    border-radius: 8px;
+    color: white;
+  }
+  
+  .message.sent .MuiTypography-root {
+    background-color: #007bff; /* צבע עבור הודעות שנשלחו */
+  }
+  
+  .message.received .MuiTypography-root {
+    background-color: #28a745; /* צבע עבור הודעות שהתקבלו */
+  }
+  
+  input, button {
+    margin-bottom: 8px;
+  }
+  

@@ -1,5 +1,5 @@
-"use client"
-import React, { useState, useCallback, useEffect, useContext } from "react";
+"use client";
+import React, { useState, useCallback, useEffect } from "react";
 import { GoogleMap, Marker, useLoadScript } from "@react-google-maps/api";
 import { useRouter } from "next/navigation";
 import "../style/map.css";
@@ -12,8 +12,7 @@ import { ReportClass, ReportType } from "@/classes/report";
 import FixReport from "./fixReport";
 import { WorkerClass } from "@/classes/worker";
 import UserClass from "@/classes/user";
-import { UserContext } from "./usercontext";
-
+// import { UserContext } from "./usercontext";
 
 interface LatLng {
   lat: number;
@@ -21,17 +20,16 @@ interface LatLng {
 }
 
 const Map: React.FC = () => {
-  const userContext = useContext(UserContext);
-  if (!userContext) {
-  throw new Error('map must be used within a UserProvider');
-}
-const { user, setUser } = userContext;
+//   const userContext = useContext(UserContext);
+//   if (!userContext) {
+//   throw new Error('map must be used within a UserProvider');
+// }
+// const { user, setUser } = userContext;
   const reports = useSelector((state: RootState) => state.reports.reports);
   const dispatch = useAppDispatch();
-  const reports = useSelector((state: RootState) => state.reports.reports);
   const reportsArr: ReportClass[] = reports;
- console.log(reports);
- 
+  console.log(reports);
+
   const user: UserClass = {
     firstName: "name",
     phone: "phone",
@@ -45,7 +43,7 @@ const { user, setUser } = userContext;
 
   const worker: WorkerClass = {
     user: user,
-    typeEmployee: [ReportType.Pavement],
+    typeEmployee: [ReportType.StreetLight],
     workerLocation: "ירושלים",
     workerID: "string",
   };
@@ -67,23 +65,30 @@ const { user, setUser } = userContext;
   const [reportData, setReportData] = useState<ReportClass | null>(null);
 
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_API_KEY || "AIzaSyCkZB_Ga1JaDjV2A1lCELpfrGR9RnK4Gu4",
+    googleMapsApiKey:
+      process.env.NEXT_PUBLIC_GOOGLE_API_KEY ||
+      "AIzaSyCkZB_Ga1JaDjV2A1lCELpfrGR9RnK4Gu4",
   });
 
   useEffect(() => {
     if (isLoaded && userType === "employee") {
       if (window.google) {
         const geocoder = new google.maps.Geocoder();
-        geocoder.geocode({ address: worker.workerLocation }, (results, status) => {
-          if (status === "OK" && results && results.length > 0) {
-            setMapCenter({
-              lat: results[0].geometry.location.lat(),
-              lng: results[0].geometry.location.lng(),
-            });
-          } else {
-            console.error("Geocode was not successful for the following reason: " + status);
+        geocoder.geocode(
+          { address: worker.workerLocation },
+          (results, status) => {
+            if (status === "OK" && results && results.length > 0) {
+              setMapCenter({
+                lat: results[0].geometry.location.lat(),
+                lng: results[0].geometry.location.lng(),
+              });
+            } else {
+              console.error(
+                "Geocode was not successful for the following reason: " + status
+              );
+            }
           }
-        });
+        );
       }
     }
   }, [isLoaded, userType, worker.workerLocation]);
@@ -94,23 +99,27 @@ const { user, setUser } = userContext;
   const handleAgreeLocationUser = () => {
     if (markerPosition) {
       const { lat, lng } = markerPosition;
-      router.push(`/report?address=${encodeURIComponent(address)}&lat=${lat}&lng=${lng}`);
+      router.push(
+        `/report?address=${encodeURIComponent(address)}&lat=${lat}&lng=${lng}`
+      );
     }
     setOpen(false);
   };
- 
 
-  const handleMapClick = useCallback((event: google.maps.MapMouseEvent) => {
-    if (event.latLng && userType === "user") {
-      const position: LatLng = {
-        lat: event.latLng.lat(),
-        lng: event.latLng.lng(),
-      };
-      setMarkerPosition(position);
-      getAddress(position);
-      handleClickOpen();
-    }
-  }, [userType]);
+  const handleMapClick = useCallback(
+    (event: google.maps.MapMouseEvent) => {
+      if (event.latLng && userType === "user") {
+        const position: LatLng = {
+          lat: event.latLng.lat(),
+          lng: event.latLng.lng(),
+        };
+        setMarkerPosition(position);
+        getAddress(position);
+        handleClickOpen();
+      }
+    },
+    [userType]
+  );
 
   const getAddress = (position: LatLng) => {
     if (window.google) {
@@ -119,7 +128,9 @@ const { user, setUser } = userContext;
         if (status === "OK" && results && results.length > 0) {
           setAddress(results[0].formatted_address);
         } else {
-          console.error("Geocode was not successful for the following reason: " + status);
+          console.error(
+            "Geocode was not successful for the following reason: " + status
+          );
         }
       });
     }
@@ -132,7 +143,7 @@ const { user, setUser } = userContext;
           lat: position.coords.latitude,
           lng: position.coords.longitude,
         };
-        console.log("User location:", userPosition); // הוספת לוג לבדיקת המיקום
+        console.log("User location:", userPosition);
         setMarkerPosition(userPosition);
         setMapCenter(userPosition);
         getAddress(userPosition);
@@ -150,7 +161,9 @@ const { user, setUser } = userContext;
   }, [isLoaded, getUserLocation, userType]);
 
   const filteredReports = reportsArr.filter(
-    (report) => report.reportType !== null && worker.typeEmployee.includes(report.reportType)
+    (report) =>
+      report.reportType !== null &&
+      worker.typeEmployee.includes(report.reportType)
   );
 
   if (loadError) {
@@ -162,7 +175,6 @@ const { user, setUser } = userContext;
   }
 
   return (
-
     <div className="App">
       {!reportData ? (
         <>
@@ -196,10 +208,13 @@ const { user, setUser } = userContext;
                   key={index}
                   position={{ lat: rep.location?.lat, lng: rep.location?.lng }}
                   icon={{
-                    url: "https://mt.google.com/vt/icon/text=!&psize=19&font=fonts/arialuni_t.ttf&color=ff390000&name=icons/spotlight/spotlight-waypoint-b.png&ax=44&ay=48&scale=1",
+                    url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(
+                      `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="red" width="24px" height="24px"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-.88-13.12h1.75v6.75h-1.75zm0 8.25h1.75v1.75h-1.75z"/></svg>`
+                    )}`,
+                    scaledSize: new google.maps.Size(30, 30),
                   }}
                   onClick={() => {
-                    setReportData(rep); 
+                    setReportData(rep);
                   }}
                 />
               ))}
@@ -211,16 +226,18 @@ const { user, setUser } = userContext;
               onClose={handleClose}
               onAgree={handleAgreeLocationUser}
             />
-          ) : (      
-            null 
-          )}
+          ) : null}
           {address && <div className="address">Current Address: {address}</div>}
         </>
       ) : (
-        <FixReport report={reportData} setReportData={setReportData} VieTheTask={false} />
+        <FixReport
+          report={reportData}
+          setReportData={setReportData}
+          vieTheTask={false}
+        />
       )}
     </div>
-);
+  );
 };
 
 export default Map;
