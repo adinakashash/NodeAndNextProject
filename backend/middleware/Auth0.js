@@ -17,7 +17,8 @@ async function(accessToken, refreshToken, profile, done) {
     displayName: profile.displayName,
     firstName: profile.name.givenName,
     lastName: profile.name.familyName,
-    image: profile.photos[0].value
+    image: profile.photos[0].value,
+    email:profile.emails[0].value
   };
 
   try {
@@ -34,4 +35,19 @@ async function(accessToken, refreshToken, profile, done) {
     done(err, null);
   }
 }));
+
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser(async (id, done) => {
+  try {
+    const user = await User.findById(id);
+    done(null, user);
+  } catch (err) {
+    done(err, null);
+  }
+});
+
+
 

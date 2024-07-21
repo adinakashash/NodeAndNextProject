@@ -22,10 +22,10 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     } else {
-      axios.get('http://localhost:3000//auth/google/callback', { withCredentials: true })
+      axios.get('http://localhost:3000/auth/google/callback', { withCredentials: true })
         .then((response) => {
           setUser(response.data);
-          Cookies.set('user', JSON.stringify(response.data));
+          Cookies.set('user', JSON.stringify(response.data), { secure: true });
         })
         .catch((error) => {
           console.error('Error fetching profile:', error);

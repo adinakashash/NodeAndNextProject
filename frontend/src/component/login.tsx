@@ -4,6 +4,8 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
+import Checkbox from "@mui/material/Checkbox";
+import FormControlLabel from "@mui/material/FormControlLabel";
 import { useAppDispatch } from "@/redux/hook";
 import { createUser } from "@/redux/slices/userSlice";
 import User from "@/classes/user";
@@ -12,7 +14,7 @@ import { UserContext } from "./usercontext";
 export default function Login() {
   const [address, setAddress] = useState("");
   const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
+  const [isWorker, setIsWorker] = useState(false);
 
   const dispatch = useAppDispatch();
   const userContext = useContext(UserContext);
@@ -22,14 +24,13 @@ export default function Login() {
   const { user, setUser } = userContext;
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    
     event.preventDefault();
     const tempuser: User = {
-      email,
       phone,
-      address
+      address,
+      isWorker
     };
-    setUser(tempuser)
+    setUser(tempuser);
     dispatch(createUser(user));
   };
 
@@ -56,18 +57,7 @@ export default function Login() {
           bgcolor: 'background.paper',
         }}
       >
-        <TextField
-          onChange={(e) => setEmail(e.target.value)}
-          autoFocus
-          required
-          margin="dense"
-          id="email"
-          name="email"
-          label="Email Address"
-          type="email"
-          fullWidth
-          variant="standard"
-        />
+
         <TextField
           onChange={(e) => setAddress(e.target.value)}
           required
@@ -90,13 +80,31 @@ export default function Login() {
           fullWidth
           variant="standard"
         />
-        <Button
-          type="submit"
-          variant="contained"
-          sx={{ mt: 2 }}
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={isWorker}
+              onChange={(e) => setIsWorker(e.target.checked)}
+              name="isWorker"
+              color="primary"
+            />
+          }
+          label="Is Worker"
+        />
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            mt: 2,
+          }}
         >
-          Submit
-        </Button>
+          <Button
+            type="submit"
+            variant="contained"
+          >
+            Submit
+          </Button>
+        </Box>
       </Box>
     </Container>
   );

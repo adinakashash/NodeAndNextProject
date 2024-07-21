@@ -149,6 +149,9 @@ const session = require('express-session');
 const passport = require('passport');
 const userRouter = require('./routers/user.router');
 const reportRouter = require('./routers/report.router');
+const http = require("http");
+const { Server } = require("socket.io");
+const Report = require("./models/report.schema");
 
 require('./middleware/Auth0');
 
@@ -170,7 +173,7 @@ function ensureAuthenticated(req, res, next) {
 }
 
 app.use('/users', userRouter);
-app.use('/reports', ensureAuthenticated, reportRouter);
+app.use('/reports', ensureAuthenticated,ensureWorker, reportRouter);
 // app.use('/add', ensureAuthenticated, additionalRoutes);
 
 app.get('/auth/google', passport.authenticate('google', { scope: ['https://www.googleapis.com/auth/plus.login'] }));
@@ -209,7 +212,61 @@ app.get('/additional-info', (req, res) => {
     res.redirect('http://localhost:3001/additional');
   res.redirect('http://localhost:3001/login')
 });
+function ensureWorker(req, res, next) {
+  if (req.isAuthenticated() && req.user.isWorker) {
+    return next();
+  } else {
+    res.status(403).json({ message: 'Forbidden: Not a worker' });
+  }
+}
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    credentials: true,
+  },
+});
+const userConnections = {}; // { userId: socketId }
 
+io.on('connection', (socket) => {
+  console.log('A new user has connected', socket.id);
+
+  socket.on('register', (userId) => {
+    userConnections[userId] = socket.id;
+  });
+
+  socket.on('message', async (message) => {
+    const { text, timestamp, username, reportId } = message;
+
+    // Fetch the report from the database
+    console.log(reportId);
+    const report = await Report.findById(reportId);
+    console.log(report);
+
+    if (!report) return;
+
+    const allowedUsers = [report.reportedBy.googleId, report.handledBy];
+
+    // Find the recipient socket ID
+    console.log(userConnections);
+    const recipientSocketId = userConnections[allowedUsers.find(userId => userConnections[userId] !== socket.id)];
+    
+    if (recipientSocketId) {
+      io.to(recipientSocketId).emit('message', message);
+    }
+  });
+
+  socket.on('disconnect', () => {
+    console.log(socket.id, ' disconnected');
+    // Remove user connection
+    for (const [userId, socketId] of Object.entries(userConnections)) {
+      if (socketId === socket.id) {
+        delete userConnections[userId];
+        break;
+      }
+    }
+  });
+});
 const CONNECTION_URL = process.env.CONNECTION_URL || 'mongodb://localhost:27017';
 const PORT = process.env.PORT || 5000;
 mongoose.connect(CONNECTION_URL, {})

@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { Button, Typography, Avatar, Box } from '@mui/material';
 import { styled } from '@mui/system';
 import User from '../classes/user';
+import { UserContext } from './usercontext';
 
 const ProfileContainer = styled(Box)({
   display: 'flex',
@@ -24,7 +25,12 @@ const ProfileAvatar = styled(Avatar)({
 });
 
 const GoogleAuth: React.FC = () => {
-  const [user, setUser] = useState<User | null>(null);
+
+  const userContext = useContext(UserContext);
+  if (!userContext) {
+    throw new Error('UserContext must be used within a UserProvider');
+  }
+  const { user, setUser } = userContext;
 
   const handleLogin = () => {
     window.open('http://localhost:3000/auth/google', '_self'); 
@@ -39,17 +45,6 @@ const GoogleAuth: React.FC = () => {
         console.error('Error logging out:', error);
       });
   };
-
-  useEffect(() => {
-    axios.get('http://localhost:3000/profile', { withCredentials: true }) 
-      .then((response) => {
-        setUser(response.data);
-      })
-      .catch((error) => {
-        console.error('Error fetching profile:', error);
-      });
-  }, []);
-
   return (
     <div>
       {user ? (
