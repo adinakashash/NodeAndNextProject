@@ -9,6 +9,9 @@ passport.use(new GoogleStrategy({
   callbackURL: 'http://localhost:3000/auth/google/callback'
 },
 async function(accessToken, refreshToken, profile, done) {
+  console.log('Access Token:', accessToken);
+  console.log('Profile:', profile);
+
   const newUser = {
     googleId: profile.id,
     displayName: profile.displayName,
@@ -17,7 +20,6 @@ async function(accessToken, refreshToken, profile, done) {
     image: profile.photos[0].value,
     email:profile.emails[0].value
   };
-
 
   try {
     let user = await User.findOne({ googleId: profile.id });

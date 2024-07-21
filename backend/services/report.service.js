@@ -19,7 +19,6 @@ exports.addReport = async (reportData) => {
 
 };
 
-
 exports.deleteReport = async (reportId) => {
   try {
     const deleteReport = await Report.findOneAndDelete({ _id: reportId });
@@ -69,6 +68,7 @@ exports.updateReport = async (reportData) => {
 
 exports.getReportByCity = async (city) => {
   try {
+    console.log(city);
     const regex = new RegExp(city, 'i'); 
     const reports = await Report.find({ address: { $regex: regex } });
     return reports;

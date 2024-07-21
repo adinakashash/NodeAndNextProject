@@ -46,6 +46,7 @@ exports.deleteReport = async (req, res) => {
 
 exports.getReportByCity = async (req, res) => {
   const city = req.params.city;
+  console.log(city);
   try {
     const reports = await reportService.getReportByCity(city);
     if (!reports.length) {

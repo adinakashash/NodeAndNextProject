@@ -1,11 +1,11 @@
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import User from '../classes/user';
+import UserClass from '../classes/user';
 
 interface UserContextType {
-  user: User | null;
-  setUser: React.Dispatch<React.SetStateAction<User | null>>;
+  user: UserClass | null;
+  setUser: React.Dispatch<React.SetStateAction<UserClass | null>>;
 }
 
 export const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -15,7 +15,7 @@ interface UserProviderProps {
 }
 
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<UserClass | null>(null);
 
   useEffect(() => {
     const storedUser = Cookies.get('user');
