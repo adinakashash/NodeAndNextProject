@@ -75,3 +75,14 @@ export const editReport= createAsyncThunk("", async (_report:ReportClass) => {
     return error;
   }
 });
+
+export const getReportByHandled = createAsyncThunk('', async (handled:string,{ dispatch }) => {
+  try {        
+    const response = await axios.get(`${http}/reports/getReportByHandled/${handled}`);
+    const data= response.data;        
+    dispatch(reportSlice.actions.setReports(data));      
+    return data;
+  } catch (error) {
+    throw error;
+  }
+});
