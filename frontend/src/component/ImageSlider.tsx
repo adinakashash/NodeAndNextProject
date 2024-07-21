@@ -1,4 +1,5 @@
-
+// src/components/ImageSlider.tsx
+"use client"
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';

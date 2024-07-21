@@ -1,9 +1,20 @@
 const userService = require('../services/user.service');
 
 exports.signup = async (req, res) => {
+  const { email, phone, address } = req.body;
+  const { googleId } = req.params;
+
   try {
-    const task = await userService.signup(req.body);
-    res.json(task);
+    const updatedUser = await userService.signup(
+      { email, phone, address },
+      googleId
+    );
+    
+    if (!updatedUser) {
+      return res.status(404).json({ message: "Failed to sign up" });
+    }
+    
+    res.json(updatedUser);
   } catch (error) {
     console.error("Failed to signup:", error.message);
     res.status(500).json({ message: error.message || "Failed to signup" });

@@ -1,27 +1,19 @@
 const bcrypt = require('bcryptjs');
 const User = require("../models/user.schema");
-const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
-exports.signup = async (userData) => {
-  const {  email, phone, password } = userData;
+exports.signup = async (userData, googleId) => {
   try {
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      throw new Error('Email already exists');
-    }
-    // const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({      
-      email,
-      phone,
-      password: hashedPassword
-    });
-    const result = await newUser.save();
-    return result;
+    console.log(googleId);
+    const updatedUser = await User.findOneAndUpdate(
+      { googleId: googleId },
+      userData,
+    );
+    return updatedUser;
   } catch (error) {
-    console.error("Failed to add user:", error.message);
-    throw new Error(error.message || "Failed to add user");
+    console.error("Failed to save user:", error.message);
+    throw new Error(error.message || "Failed to save user");
   }
 };
 
@@ -86,7 +78,7 @@ exports.updateUser = async (email, updateData) => {
       { new: true }
     );
     if (!updatedUser) {
-      throw new Error("User not found");
+      throw new Error(" not found");
     }
     return updatedUser;
   } catch (error) {

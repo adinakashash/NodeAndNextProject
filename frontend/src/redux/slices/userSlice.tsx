@@ -16,22 +16,22 @@ export const selectUsers = (state: RootState) => state.userSlice.users;
 export default userSlice.reducer;
 
 export const createUser = createAsyncThunk("", async (_user: User) => {
-  try {    
-    const response = await axios.post(`${http}/users/signup`, _user);
-    return response.data;
-  } catch (error) {
-    return error;
-  }
+  try {
+    const response = await axios.put(http+`/users/${_user.googleId}`, _user)
+    return response.data
+} catch (error) {
+    return error
+}
 });
 
-export const editTaskManager = createAsyncThunk("", async () => {
-  try {
-    const response = await axios.put(`${http}/tasks/manager/task`);
-    return response.data;
-  } catch (error) {
-    return error;
-  }
-});
+// export const editTaskManager = createAsyncThunk("", async () => {
+//   try {
+//     const response = await axios.put(`${http}/tasks/manager/task`);
+//     return response.data;
+//   } catch (error) {
+//     return error;
+//   }
+// });
 
 export const deleteTask = createAsyncThunk("", async () => {
   try {

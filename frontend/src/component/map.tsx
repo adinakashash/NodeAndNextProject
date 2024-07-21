@@ -1,4 +1,5 @@
-import React, { useState, useCallback, useEffect } from "react";
+"use client"
+import React, { useState, useCallback, useEffect, useContext } from "react";
 import { GoogleMap, Marker, useLoadScript } from "@react-google-maps/api";
 import { useRouter } from "next/navigation";
 import "../style/map.css";
@@ -11,6 +12,8 @@ import { ReportClass, ReportType } from "@/classes/report";
 import FixReport from "./fixReport";
 import { WorkerClass } from "@/classes/worker";
 import UserClass from "@/classes/user";
+import { UserContext } from "./usercontext";
+
 
 interface LatLng {
   lat: number;
@@ -18,6 +21,12 @@ interface LatLng {
 }
 
 const Map: React.FC = () => {
+  const userContext = useContext(UserContext);
+  if (!userContext) {
+  throw new Error('map must be used within a UserProvider');
+}
+const { user, setUser } = userContext;
+  const reports = useSelector((state: RootState) => state.reports.reports);
   const dispatch = useAppDispatch();
   const reports = useSelector((state: RootState) => state.reports.reports);
   const reportsArr: ReportClass[] = reports;
@@ -153,6 +162,7 @@ const Map: React.FC = () => {
   }
 
   return (
+
     <div className="App">
       {!reportData ? (
         <>
@@ -210,7 +220,7 @@ const Map: React.FC = () => {
         <FixReport report={reportData} setReportData={setReportData} VieTheTask={false} />
       )}
     </div>
-  );
+);
 };
 
 export default Map;
