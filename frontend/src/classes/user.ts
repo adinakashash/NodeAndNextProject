@@ -7,6 +7,7 @@ class UserClass {
     phone!:String;
     email!:String;
     address!:String;
+    isWorker!:boolean
     constructor() { }
 }
 
