@@ -14,7 +14,8 @@ async function(accessToken, refreshToken, profile, done) {
     displayName: profile.displayName,
     firstName: profile.name.givenName,
     lastName: profile.name.familyName,
-    image: profile.photos[0].value
+    image: profile.photos[0].value,
+    email:profile.emails[0].value
   };
 
 
@@ -45,3 +46,6 @@ passport.deserializeUser(async (id, done) => {
     done(err, null);
   }
 });
+
+
+
