@@ -59,3 +59,18 @@ exports.getReportByCity = async (req, res) => {
   }
 };
 
+exports.getReportByHandled = async (req, res) => {
+  try {
+    const handled = req.params.handled;
+    console.log(handled);
+    const reports = await reportService.getReportByHandled(handled);
+    if (!reports.length) {
+      return res.status(404).json({ message: "No reports found for the given handledBy" });
+    }
+    res.json(reports);
+  } catch (error) {
+    console.error("Error in controller:", error);
+    res.status(500).json({ message: error.message });
+  }
+};
+

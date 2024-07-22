@@ -7,14 +7,15 @@ import LocationDialog from "./locationVerification";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { useAppDispatch } from "@/redux/hook";
-import { getReportByCity } from "@/redux/slices/reportSlice";
+import { getReportByCity} from "@/redux/slices/reportSlice";
 import { ReportClass, ReportType } from "@/classes/report";
 import FixReport from "./fixReport";
+import ViewingMyReports from './Viewing_my_reports';
 import { WorkerClass } from "@/classes/worker";
 import UserClass from "@/classes/user";
 import { getWorkersById } from "@/redux/slices/workerSlice";
 import { fetchUser } from "@/redux/slices/currentUserSlice";
-
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 interface LatLng {
   lat: number;
   lng: number;
@@ -32,17 +33,12 @@ const Map: React.FC = () => {
   const reports = useSelector((state: RootState) => state.reports.reports);
   const reportsArr: ReportClass[] = reports;
   console.log(user?.isWorker);
-
-  // useEffect(() => {
-  //   dispatch(getWorkersById(user?.googleId));
-  // }, [dispatch]);
-
   useEffect(() => {
     dispatch(getReportByCity(user?.address));
   }, [dispatch, user?.address]);
 
-  const router = useRouter();
 
+  const router = useRouter();
   const [open, setOpen] = useState<boolean>(false);
   const [markerPosition, setMarkerPosition] = useState<LatLng | null>(null);
   const [mapCenter, setMapCenter] = useState<LatLng>({
@@ -89,6 +85,10 @@ const Map: React.FC = () => {
 
   const handleClickOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  const handleSubmitgetReportByHandled = () => {
+    router.push('/reportByHandled');
+  };
 
   const handleAgreeLocationUser = () => {
     if (markerPosition) {
@@ -230,6 +230,8 @@ const Map: React.FC = () => {
           vieTheTask={false}
         />
       )}
+      {/* {showViewingReports && <ViewingMyReports />} */}
+      <button onClick={handleSubmitgetReportByHandled}>Viewing my reports</button>
     </div>
   );
 };
