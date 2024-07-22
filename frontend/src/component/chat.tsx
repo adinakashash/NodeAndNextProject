@@ -57,7 +57,7 @@ const Chat: React.FC<{ reportId: string }> = ({ reportId }) => {
 
   const sendMessage = () => {
     if (messageInput.trim() !== '') {
-      const message: Message = { text: messageInput, timestamp: new Date().toISOString(), username, reportId };
+      const message: Message = { text: messageInput, timestamp: new Date().toISOString(), username };
       socket.emit('message', message);
       setMessageInput(''); 
     }

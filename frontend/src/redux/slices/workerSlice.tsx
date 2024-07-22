@@ -55,6 +55,18 @@ export const getWorkersByTypeJobAndLocation = createAsyncThunk(
     }
   }
 );
+export const getWorkersById = createAsyncThunk(
+  "",
+  async (id:String) => {
+    try {
+      const response = await axios.post(`${http}/workers/${id}`);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
 
 export const addWorker = createAsyncThunk("workers/addWorker", async (_worker: WorkerClass) => {
   try {

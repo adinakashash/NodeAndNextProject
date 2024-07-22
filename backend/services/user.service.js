@@ -87,9 +87,9 @@ exports.updateUser = async (email, updateData) => {
   }
 };
 
-exports.getUserByName = async (displayName) => {
+exports.getUserByGoogleId = async (googleId) => {
   try {
-    const user = await User.findOne({ displayName });
+    const user = await User.findOne({googleId: googleId });
     if (!user) {
       throw new Error("User not found");
     }

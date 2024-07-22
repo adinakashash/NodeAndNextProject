@@ -1,80 +1,74 @@
-const mongoose = require('mongoose');
-const Report = require("../models/report.schema");
+const reportService = require('../services/report.service');
 
-exports.addReport = async (reportData) => {
-  const { location } = reportData;
+exports.addReport = async (req, res) => {
   try {
-    const existingReport = await Report.findOne({ location });
-    if (existingReport) {
-      throw new Error('Location already exists');
-    }   
-    const newReport = new Report({
-      ...reportData
-    });
-    const result = await newReport.save();
-    return result;
+    const rep = await reportService.addReport(req.body);
+    res.json(rep);
   } catch (error) {
-    throw new Error('Error occurred while adding the report');
-  }
-
-};
-
-exports.deleteReport = async (reportId) => {
-  try {
-    const deleteReport = await Report.findOneAndDelete({ _id: reportId });
-    if (!deleteReport) {
-      throw new Error("reportId not found");
-    }
-    return deleteReport;
-  } catch (error) {
-    console.error("Failed to delete report:", error);
-    throw new Error( "Failed to delete report");
+    res.status(500).json({ message: error.message });
   }
 };
 
-exports.getAllReports = async () => {
+exports.updateReport = async (req, res) => {
   try {
-    return await Report.find();
-  } catch (error) {
-    console.error("Failed to get reports:", error);
-    throw new Error( "Failed to get reports");
-  }
-};
-
-exports.updateReport = async (reportData) => {
-  const { handledBy, status, _id } = reportData;
-    const updateData = {
-    handledBy:handledBy,
-    status: status,
-  };
-  try {
-    const updatedReport = await Report.findOneAndUpdate(
-      { _id: _id },
-      { $set: updateData },
-      { new: true }
-    );
+    const updatedReport = await reportService.updateReport(req.body);
     if (!updatedReport) {
-      throw new Error("Report not found");
+      return res.status(404).json({ message: "Report not found" });
     }
-    
-    return updatedReport;
+    res.json(updatedReport);
   } catch (error) {
-    console.error("Failed to update report:", error);
-    throw new Error("Failed to update report");
+    res.status(500).json({ message: error.message });
   }
 };
 
 
-
-exports.getReportByCity = async (city) => {
+exports.getAllReports = async (req, res) => {
   try {
-    console.log(city);
-    const regex = new RegExp(city, 'i'); 
-    const reports = await Report.find({ address: { $regex: regex } });
-    return reports;
+    const report = await reportService.getAllReports();
+    res.json(report);
   } catch (error) {
-    console.error("Failed to get reports by city:", error);
-    throw new Error("Failed to get reports by city");
+    res.status(500).json({ message: error.message });
   }
 };
 
+exports.deleteReport = async (req, res) => {
+  const reportId = req.params.reportId;
+  try {
+    const deletedReport = await reportService.deleteReport(reportId);
+    if (!deletedReport) {
+      return res.status(404).json({ message: "report not found" });
+    }
+    res.json({ message: "report deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message});
+  }
+};
+
+exports.getReportByCity = async (req, res) => {
+  const city = req.params.city;
+  try {
+    const reports = await reportService.getReportByCity(city);
+    if (!reports.length) {
+      return res.status(404).json({ message: "No reports found for the given city" });
+    }
+    res.json(reports);
+  } catch (error) {
+    console.error("Error in controller:", error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.getReportByHandled = async (req, res) => {
+  try {
+    const handled = req.params.handled;
+    console.log(handled);
+    const reports = await reportService.getReportByHandled(handled);
+    if (!reports.length) {
+      return res.status(404).json({ message: "No reports found for the given handledBy" });
+    }
+    res.json(reports);
+  } catch (error) {
+    console.error("Error in controller:", error);
+    res.status(500).json({ message: error.message });
+  }
+};
