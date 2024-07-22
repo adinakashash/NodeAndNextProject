@@ -3,11 +3,10 @@ import ReduxProvider from "@/component/reduxProvider";
 // import Login from "@/component/login";
 import React from "react";
 import GoogleAuth from "@/component/loginwithgoogle";
-import { UserProvider } from "@/component/usercontext";
 export default function LoginPage() {
   return (
-    <UserProvider>
+    <ReduxProvider>
       <GoogleAuth/>
-    </UserProvider>
+      </ReduxProvider>
   );
 }

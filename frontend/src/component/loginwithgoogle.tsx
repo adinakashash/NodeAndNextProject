@@ -1,9 +1,12 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useEffect } from 'react';
 import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux';
 import { Button, Typography, Avatar, Box } from '@mui/material';
 import { styled } from '@mui/system';
 import User from '../classes/user';
-import { UserContext } from './usercontext';
+import { RootState, AppDispatch } from '../redux/store';
+import { setUser, fetchUser } from '../redux/slices/currentUserSlice';
+import { WorkerClass } from '@/classes/worker';
 
 const ProfileContainer = styled(Box)({
   display: 'flex',
@@ -25,12 +28,14 @@ const ProfileAvatar = styled(Avatar)({
 });
 
 const GoogleAuth: React.FC = () => {
-
-  const userContext = useContext(UserContext);
-  if (!userContext) {
-    throw new Error('UserContext must be used within a UserProvider');
+  const dispatch = useDispatch<AppDispatch>();
+  let user = useSelector((state: RootState) => state.cuurentuser.user); 
+  if (user instanceof WorkerClass) {
+    user = user.user;
   }
-  const { user, setUser } = userContext;
+  useEffect(() => {
+    dispatch(fetchUser());
+  }, [dispatch]);
 
   const handleLogin = () => {
     window.open('http://localhost:3000/auth/google', '_self'); 
@@ -39,12 +44,13 @@ const GoogleAuth: React.FC = () => {
   const handleLogout = () => {
     axios.get('http://localhost:3000/auth/logout', { withCredentials: true }) 
       .then(() => {
-        setUser(null);
+        dispatch(setUser(null));
       })
       .catch((error) => {
         console.error('Error logging out:', error);
       });
   };
+
   return (
     <div>
       {user ? (

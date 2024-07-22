@@ -76,7 +76,8 @@ const Report: React.FC = (props:any) => {
       displayName: name,
       lastName: name,
       image: "undefined",
-      address: "undefined"
+      address: "undefined",
+      isWorker: false
     };
     const location: LatLng = {
        lat, 

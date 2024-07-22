@@ -1,37 +1,43 @@
 "use client";
-import { useState, useContext, FormEvent } from "react";
+import { useState, useEffect, FormEvent } from "react";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import { useAppDispatch } from "@/redux/hook";
+import { useAppDispatch, useAppSelector } from "@/redux/hook";
 import { createUser } from "@/redux/slices/userSlice";
+import{setUser,fetchUser} from "@/redux/slices/currentUserSlice"
 import User from "@/classes/user";
-import { UserContext } from "./usercontext";
+import Cookies from "js-cookie";
 
 export default function Login() {
   const [address, setAddress] = useState("");
   const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState(""); 
   const [isWorker, setIsWorker] = useState(false);
 
   const dispatch = useAppDispatch();
-  const userContext = useContext(UserContext);
-  if (!userContext) {
-    throw new Error('UserContext must be used within a UserProvider');
-  }
-  const { user, setUser } = userContext;
+  useEffect(() => {
+    const storedUser = Cookies.get('user');
+    if (storedUser) {
+      const user = JSON.parse(storedUser) as User;
+      dispatch(setUser(user));
+    }
+  }, [dispatch]);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const tempuser: User = {
+    const newUser: User = { 
+      email, 
       phone,
       address,
       isWorker
     };
-    setUser(tempuser);
-    dispatch(createUser(user));
+    // Save user to cookies and Redux store
+    Cookies.set('user', JSON.stringify(newUser), { secure: true });
+    dispatch(createUser(newUser)); 
   };
 
   return (
@@ -57,7 +63,17 @@ export default function Login() {
           bgcolor: 'background.paper',
         }}
       >
-
+        <TextField
+          onChange={(e) => setEmail(e.target.value)} 
+          required
+          margin="dense"
+          id="email"
+          name="email"
+          label="Email Address"
+          type="email"
+          fullWidth
+          variant="standard"
+        />
         <TextField
           onChange={(e) => setAddress(e.target.value)}
           required
