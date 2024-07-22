@@ -1,13 +1,11 @@
 "use client";
 import ReduxProvider from "@/component/reduxProvider";
-import Map from "@/component/map";
+import ReportsDrawer from "@/component/Viewing_my_reports";
 import React from "react";
-
 export default function MapPage() {
   return (
     <ReduxProvider>
-      <Map />
+      <ReportsDrawer/>
     </ReduxProvider>
-
   );
 }

@@ -23,7 +23,7 @@ export const {} = reportSlice.actions;
 export const selectReports = (state: RootState) => state.reports;
 export default reportSlice.reducer;
 
-export const getReportByCity = createAsyncThunk('', async (city:string,{ dispatch }) => {
+export const getReportByCity = createAsyncThunk('', async (city:String|undefined,{ dispatch }) => {
   try {        
     const response = await axios.get(`${http}/reports/${city}`);
     const data= response.data;        
@@ -70,4 +70,5 @@ export const getReportByHandled = createAsyncThunk('', async (handled:string,{ d
   } catch (error) {
     throw error;
   }
+
 });

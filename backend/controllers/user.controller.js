@@ -1,12 +1,12 @@
 const userService = require('../services/user.service');
 
 exports.signup = async (req, res) => {
-  const {  phone, address } = req.body;
+  const {  email, phone, address, isWorker } = req.body;
   const { googleId } = req.params;
 
   try {
     const updatedUser = await userService.signup(
-      {  phone, address, isWorker },
+      {  email,phone, address, isWorker },
       googleId
     );
     

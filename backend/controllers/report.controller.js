@@ -78,12 +78,28 @@ exports.getReportByCity = async (city) => {
   }
 };
 
-exports.getReportByHandled = async (handled) => {
+// exports.getReportByHandled = async (handled) => {
+//   try {
+//     const reports = await Report.find({handledBy:handled});
+//     return reports;
+//   } catch (error) {
+//     console.error("Failed to get reports by handled:", error);
+//     throw new Error("Failed to get reports by handled");
+//   }
+// };
+
+exports.getReportByHandled = async (req, res) => {
   try {
-    const reports = await Report.find({handledBy:handled});
-    return reports;
+    const handled = req.params.handled;
+    console.log(handled);
+    const reports = await reportService.getReportByHandled(handled);
+    if (!reports.length) {
+      return res.status(404).json({ message: "No reports found for the given handledBy" });
+    }
+    res.json(reports);
   } catch (error) {
-    console.error("Failed to get reports by handled:", error);
-    throw new Error("Failed to get reports by handled");
+    console.error("Error in controller:", error);
+    res.status(500).json({ message: error.message });
   }
 };
+

@@ -72,3 +72,13 @@ exports.getReportByHandled = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+// exports.getReportByHandled = async (handled) => {
+//   try {
+//     const reports = await Report.find({handledBy:handled});
+//     return reports;
+//   } catch (error) {
+//     console.error("Failed to get reports by handled:", error);
+//     throw new Error("Failed to get reports by handled");
+//   }
+// };
+

@@ -14,8 +14,7 @@ const http = require("http");
 const { Server } = require("socket.io");
 const Report = require("./models/report.schema");
 
-require('./middleware/Auth0');
-
+const configurePassport = require('./auth/Auth0'); 
 const app = express();
 
 app.use(bodyParser.json());
@@ -34,16 +33,19 @@ function ensureAuthenticated(req, res, next) {
 }
 
 app.use('/users', userRouter);
-app.use('/workers',workerRouter)
-app.use('/reports', ensureAuthenticated,ensureWorker, reportRouter);
-// app.use('/add', ensureAuthenticated, additionalRoutes);
 
-app.get('/auth/google', passport.authenticate('google', { scope: ['https://www.googleapis.com/auth/plus.login'] }));
+app.use('/reports', ensureAuthenticated, ensureWorker, reportRouter);
+app.get('/auth/google', (req, res, next) => {
+  configurePassport(); 
+  passport.authenticate('google', { scope: ['https://www.googleapis.com/auth/plus.login'] })(req, res, next);
+});
 
 app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/' }), (req, res) => {
+  
   const user = req.user;
   res.cookie('user', JSON.stringify(user));
-  res.redirect('/additional-info');
+  
+  return res.redirect('/additional-info');
 });
 
 app.get('/auth/logout', (req, res) => {
@@ -70,9 +72,10 @@ app.get('/additional-info', (req, res) => {
     return res.redirect('/auth/google');
   }
   email = req.user.email
+  console.log(email);
   if (!email)
-    res.redirect('http://localhost:3001/additional');
-  res.redirect('http://localhost:3001/login')
+    return res.redirect('http://localhost:3001/additional');
+  return res.redirect('http://localhost:3001/login')
 });
 function ensureWorker(req, res, next) {
   if (req.isAuthenticated() && req.user.isWorker) {

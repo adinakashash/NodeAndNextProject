@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, isRejectedWithValue } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 import axios from "axios";
 import { WorkerClass } from "@/classes/worker";
@@ -63,6 +63,15 @@ export const getWorkersById = createAsyncThunk(
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data || error.message);
+
+// export const getWorkersById= createAsyncThunk(
+//   "workers/getByTypeJobAndLocation",
+//   async (id:String|undefined) => {
+//     try {
+//       const response = await axios.get(`${http}/workers/${id}`);
+//       return response.data;
+//     } catch (error: any) {
+//       return isRejectedWithValue(error.response?.data || error.message);
     }
   }
 );

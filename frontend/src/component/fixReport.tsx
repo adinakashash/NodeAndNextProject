@@ -24,11 +24,7 @@ interface ReportFoxDate {
   setReportData: React.Dispatch<React.SetStateAction<ReportClass | null>>;
 }
 
-const FixReport: React.FC<ReportFoxDate> = ({
-  report,
-  setReportData,
-  vieTheTask,
-}) => {
+const FixReport: React.FC<ReportFoxDate> = ({ report, setReportData ,vieTheTask }) => {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const [chat, setChat] = useState<boolean>(false);
