@@ -55,14 +55,23 @@ export const getWorkersByTypeJobAndLocation = createAsyncThunk(
     }
   }
 );
-export const getWorkersById= createAsyncThunk(
-  "workers/getByTypeJobAndLocation",
-  async (id:String|undefined) => {
+export const getWorkersById = createAsyncThunk(
+  "",
+  async (id:String) => {
     try {
-      const response = await axios.get(`${http}/workers/${id}`);
+      const response = await axios.post(`${http}/workers/${id}`);
       return response.data;
     } catch (error: any) {
-      return isRejectedWithValue(error.response?.data || error.message);
+      return rejectWithValue(error.response?.data || error.message);
+
+// export const getWorkersById= createAsyncThunk(
+//   "workers/getByTypeJobAndLocation",
+//   async (id:String|undefined) => {
+//     try {
+//       const response = await axios.get(`${http}/workers/${id}`);
+//       return response.data;
+//     } catch (error: any) {
+//       return isRejectedWithValue(error.response?.data || error.message);
     }
   }
 );

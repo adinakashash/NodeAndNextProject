@@ -1,63 +1,92 @@
-const reportService = require('../services/report.service');
+const mongoose = require('mongoose');
+const Report = require("../models/report.schema");
 
-exports.addReport = async (req, res) => {
+exports.addReport = async (reportData) => {
+  const { location } = reportData;
   try {
-    const rep = await reportService.addReport(req.body);
-    res.json(rep);
+    const existingReport = await Report.findOne({ location });
+    if (existingReport) {
+      throw new Error('Location already exists');
+    }   
+    const newReport = new Report({
+      ...reportData
+    });
+    const result = await newReport.save();
+    return result;
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    throw new Error('Error occurred while adding the report');
+  }
+
+};
+
+
+exports.deleteReport = async (reportId) => {
+  try {
+    const deleteReport = await Report.findOneAndDelete({ _id: reportId });
+    if (!deleteReport) {
+      throw new Error("reportId not found");
+    }
+    return deleteReport;
+  } catch (error) {
+    console.error("Failed to delete report:", error);
+    throw new Error( "Failed to delete report");
   }
 };
 
-exports.updateReport = async (req, res) => {
+exports.getAllReports = async () => {
   try {
-    const updatedReport = await reportService.updateReport(req.body);
+    return await Report.find();
+  } catch (error) {
+    console.error("Failed to get reports:", error);
+    throw new Error( "Failed to get reports");
+  }
+};
+
+exports.updateReport = async (reportData) => {
+  const { handledBy, status, _id } = reportData;
+    const updateData = {
+    handledBy:handledBy,
+    status: status,
+  };
+  try {
+    const updatedReport = await Report.findOneAndUpdate(
+      { _id: _id },
+      { $set: updateData },
+      { new: true }
+    );
     if (!updatedReport) {
-      return res.status(404).json({ message: "Report not found" });
+      throw new Error("Report not found");
     }
-    res.json(updatedReport);
+    
+    return updatedReport;
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("Failed to update report:", error);
+    throw new Error("Failed to update report");
   }
 };
 
 
-exports.getAllReports = async (req, res) => {
+
+exports.getReportByCity = async (city) => {
   try {
-    const report = await reportService.getAllReports();
-    res.json(report);
+    const regex = new RegExp(city, 'i'); 
+    const reports = await Report.find({ address: { $regex: regex } });
+    return reports;
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("Failed to get reports by city:", error);
+    throw new Error("Failed to get reports by city");
   }
 };
 
-exports.deleteReport = async (req, res) => {
-  const reportId = req.params.reportId;
-  try {
-    const deletedReport = await reportService.deleteReport(reportId);
-    if (!deletedReport) {
-      return res.status(404).json({ message: "report not found" });
-    }
-    res.json({ message: "report deleted successfully" });
-  } catch (error) {
-    res.status(500).json({ message: error.message});
-  }
-};
-
-exports.getReportByCity = async (req, res) => {
-  const city = req.params.city;
-  console.log(city);
-  try {
-    const reports = await reportService.getReportByCity(city);
-    if (!reports.length) {
-      return res.status(404).json({ message: "No reports found for the given city" });
-    }
-    res.json(reports);
-  } catch (error) {
-    console.error("Error in controller:", error);
-    res.status(500).json({ message: error.message });
-  }
-};
+// exports.getReportByHandled = async (handled) => {
+//   try {
+//     const reports = await Report.find({handledBy:handled});
+//     return reports;
+//   } catch (error) {
+//     console.error("Failed to get reports by handled:", error);
+//     throw new Error("Failed to get reports by handled");
+//   }
+// };
 
 exports.getReportByHandled = async (req, res) => {
   try {

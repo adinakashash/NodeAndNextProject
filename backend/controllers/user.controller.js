@@ -70,11 +70,11 @@ exports.updateUser = async (req, res) => {
   }
 };
 
-exports.getUserByName = async (req, res) => {
-  const { displayName } = req.params;
+exports.getUserByGoogleId = async (req, res) => {
+  const { googleId  } = req.params;
 
   try {
-    const user = await userService.getUserByName(displayName);
+    const user = await userService.getUserByGoogleId(googleId);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }

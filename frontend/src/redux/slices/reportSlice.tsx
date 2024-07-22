@@ -25,22 +25,7 @@ export default reportSlice.reducer;
 
 export const getReportByCity = createAsyncThunk('', async (city:String|undefined,{ dispatch }) => {
   try {        
-    console.log(city);
-    
     const response = await axios.get(`${http}/reports/${city}`);
-    
-    const data= response.data;
-    console.log(data);
-        
-    dispatch(reportSlice.actions.setReports(data));      
-    return data;
-  } catch (error) {
-    throw error;
-  }
-});
-export const getReportByHandled = createAsyncThunk('', async (handled:string,{ dispatch }) => {
-  try {        
-    const response = await axios.get(`${http}/reports/getReportByHandled/${handled}`);
     const data= response.data;        
     dispatch(reportSlice.actions.setReports(data));      
     return data;
@@ -85,4 +70,5 @@ export const getReportByHandled = createAsyncThunk('', async (handled:string,{ d
   } catch (error) {
     throw error;
   }
+
 });

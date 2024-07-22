@@ -35,7 +35,6 @@ exports.getAllWorkers = async () => {
 };
 
 
-
 exports.getWorkersByTypeJobAndLocation = async (typeWorker, city) => {
   try {
 
@@ -50,3 +49,25 @@ exports.getWorkersByTypeJobAndLocation = async (typeWorker, city) => {
     throw new Error(error.message || "Failed to get Workers");
   }
 };
+
+exports.getWorkerByGoogleId = async (googleId) => {
+  console.log("ggggggggggggggggggg");
+  try {
+    // מצא את ה-Worker ו-`populate` את השדה של `user`
+    const worker = await Worker.findOne({}).populate({
+      path: 'user',
+      match: { googleId: googleId }
+    });
+
+    // אם לא נמצא עובד או שה-user לא תואם ל-googleId המבוקש
+    if (!worker || !worker.user) {
+      throw new Error("Worker not found");
+    }
+
+    return worker;
+  } catch (error) {
+    console.error("Failed to get worker:", error.message);
+    throw new Error(error.message || "Failed to get worker");
+  }
+};
+

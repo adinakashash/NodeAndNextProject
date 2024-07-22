@@ -8,6 +8,7 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const passport = require('passport');
 const userRouter = require('./routers/user.router');
+const workerRouter = require('./routers/user.router');
 const reportRouter = require('./routers/report.router');
 const http = require("http");
 const { Server } = require("socket.io");
@@ -32,6 +33,7 @@ function ensureAuthenticated(req, res, next) {
 }
 
 app.use('/users', userRouter);
+
 app.use('/reports', ensureAuthenticated, ensureWorker, reportRouter);
 app.get('/auth/google', (req, res, next) => {
   configurePassport(); 
@@ -89,7 +91,7 @@ const io = new Server(server, {
     credentials: true,
   },
 });
-const userConnections = {}; // { userId: socketId }
+const userConnections = {}; 
 
 io.on('connection', (socket) => {
   console.log('A new user has connected', socket.id);
@@ -97,7 +99,7 @@ io.on('connection', (socket) => {
   socket.on('register', (userId) => {
     userConnections[userId] = socket.id;
   });
-
+;
   socket.on('message', async (message) => {
     const { text, timestamp, username, reportId } = message;
 
