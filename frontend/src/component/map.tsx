@@ -1,11 +1,11 @@
 "use client";
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useContext } from "react";
 import { GoogleMap, Marker, useLoadScript } from "@react-google-maps/api";
 import { useRouter } from "next/navigation";
 import "../style/map.css";
 import LocationDialog from "./locationVerification";
-import { useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/redux/store";
 import { useAppDispatch } from "@/redux/hook";
 import { getReportByCity} from "@/redux/slices/reportSlice";
 import { ReportClass, ReportType } from "@/classes/report";
@@ -13,50 +13,29 @@ import FixReport from "./fixReport";
 import ViewingMyReports from './Viewing_my_reports';
 import { WorkerClass } from "@/classes/worker";
 import UserClass from "@/classes/user";
-
+import { getWorkersById } from "@/redux/slices/workerSlice";
+import { fetchUser } from "@/redux/slices/currentUserSlice";
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-
-
 interface LatLng {
   lat: number;
   lng: number;
 }
 
 const Map: React.FC = () => {
-//   const userContext = useContext(UserContext);
-//   if (!userContext) {
-//   throw new Error('map must be used within a UserProvider');
-// }
-// const { user, setUser } = userContext;
-  const reports = useSelector((state: RootState) => state.reports.reports);
-  const dispatch = useAppDispatch();
-  const reportsArr: ReportClass[] = reports;
-
-  console.log(reports);
-
-  const user: UserClass = {
-    firstName: "name",
-    phone: "phone",
-    email: "email",
-    googleId: "123",
-    displayName: "name",
-    lastName: "name",
-    image: "undefined",
-    address: "undefined",
-    isWorker: false
-  };
-
-  const worker: WorkerClass = {
-    user: user,
-    typeEmployee: [ReportType.StreetLight],
-    typeEmployee: [ReportType.Water],
-    workerLocation: "ירושלים",
-    workerID: "string",
-  };
-
+  const dispatch = useDispatch<AppDispatch>();
+  let user = useSelector((state: RootState) => state.cuurentuser.user); 
+  if (user instanceof WorkerClass) {
+    user = user.user;
+  }
   useEffect(() => {
-    dispatch(getReportByCity(worker.workerLocation));
-  }, [dispatch, worker.workerLocation]);
+    dispatch(fetchUser());
+  }, [dispatch]);
+  const reports = useSelector((state: RootState) => state.reports.reports);
+  const reportsArr: ReportClass[] = reports;
+  console.log(user?.isWorker);
+  useEffect(() => {
+    dispatch(getReportByCity(user?.address));
+  }, [dispatch, user?.address]);
 
 
   const router = useRouter();
@@ -66,8 +45,13 @@ const Map: React.FC = () => {
     lat: 31.771959,
     lng: 35.217018,
   });
-  const [address, setAddress] = useState<string>("");
-  const [userType, setUserType] = useState<string>("employee");
+  const [address, setAddress] = useState<string|undefined|null>("");
+  const [userType, setUserType] = useState<string>("");
+  if(user?.isWorker){
+    setUserType("employee")
+  }else{
+    setUserType("user")
+  }
   const [reportData, setReportData] = useState<ReportClass | null>(null);
 
   const { isLoaded, loadError } = useLoadScript({
@@ -81,7 +65,7 @@ const Map: React.FC = () => {
       if (window.google) {
         const geocoder = new google.maps.Geocoder();
         geocoder.geocode(
-          { address: worker.workerLocation },
+          { address: user?.address },
           (results, status) => {
             if (status === "OK" && results && results.length > 0) {
               setMapCenter({
@@ -97,7 +81,7 @@ const Map: React.FC = () => {
         );
       }
     }
-  }, [isLoaded, userType, worker.workerLocation]);
+  }, [isLoaded, userType, user?.address]);
 
   const handleClickOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -173,7 +157,7 @@ const Map: React.FC = () => {
   const filteredReports = reportsArr.filter(
     (report) =>
       report.reportType !== null &&
-      worker.typeEmployee.includes(report.reportType)
+      user.typeEmployee.includes(report.reportType)
   );
 
   if (loadError) {

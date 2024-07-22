@@ -23,7 +23,7 @@ export const {} = reportSlice.actions;
 export const selectReports = (state: RootState) => state.reports;
 export default reportSlice.reducer;
 
-export const getReportByCity = createAsyncThunk('', async (city:string,{ dispatch }) => {
+export const getReportByCity = createAsyncThunk('', async (city:String|undefined,{ dispatch }) => {
   try {        
     console.log(city);
     
