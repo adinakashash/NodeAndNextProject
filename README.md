@@ -1,7 +1,7 @@
 # City Task and Issue Management System
 
 This project provides an efficient platform for managing city issues and tasks, allowing seamless reporting and tracking of city-related problems. It features a Google login integration and distinct user roles for city residents and city employees.
-![main page](images/main screen.png)
+![main page](images/main_screen.png)
 ## Features
 
 ### For City Residents
